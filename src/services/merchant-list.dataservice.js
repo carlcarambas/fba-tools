@@ -16,12 +16,10 @@
 
         return services;
 
-
-
         function getMerchantList() {
-            return $http.get("http://localhost:3000/api/merchant/all")
+            return $http.get("http://localhost:3000/api/merchant")
             .then(function(response) {
-                console.log(resoponse);
+               return response;
             });
         }
 

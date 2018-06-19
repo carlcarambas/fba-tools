@@ -71,7 +71,6 @@ function homeCtrl(
     merchantListDataService.getMerchantList()
     .then(function(results) {
       vm.data = results;
-      console.log(results);
     }, function(error) {})
     .finally(function() {
 
