@@ -19,7 +19,8 @@
         function getMerchantList() {
             return $http.get("http://localhost:3000/api/merchant")
             .then(function(response) {
-               return response;
+                console.log(response.data);
+                return response;
             });
         }
 
