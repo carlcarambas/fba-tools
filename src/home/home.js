@@ -1,9 +1,36 @@
 'use strict';
 var angular = require('angular');
-
 require('../css/home.css')
 
-function homeCtrl($scope, $sessionStorage, $state, $filter, LoginSvc) {
+angular.module('proj')
+  .controller('homeCtrl', homeCtrl)
+  .config([ '$stateProvider', routeConfig ])
+
+  var stateConfig = {
+    name: 'home',
+    url: '/home',
+    templateUrl: require('./home.html'),
+    controller: 'homeCtrl'
+  };
+
+  function routeConfig($stateProvider) {
+    $stateProvider.state(stateConfig)
+  }
+  
+  homeCtrl.$inject = [
+    '$scope',
+    '$sessionStorage',
+    '$state','$filter',
+    'LoginSvc','app.merchant-list.dataservice'
+  ]
+
+function homeCtrl(
+  $scope, 
+  $sessionStorage, 
+  $state, $filter, 
+  LoginSvc, merchantListDataService
+) {
+
   $scope.title = 'proj';
   $scope.navBar = require('../includes/navbar.html')
   $scope.links = $state.get()
@@ -14,6 +41,7 @@ function homeCtrl($scope, $sessionStorage, $state, $filter, LoginSvc) {
         link: $state.href(x.name)
       }
     });
+
   $scope.tableData = [
     ['Merchant ID', 'Sequence No.', 'Header', 'Header', 'Header' ],
     ["1001","Lorem","ipsum","dolor","sit"],
@@ -34,34 +62,27 @@ function homeCtrl($scope, $sessionStorage, $state, $filter, LoginSvc) {
 
   $scope.signout = signout;
 
+  var vm = this;
+  vm.data = {};
+  vm.$onInit = activate;
+  return;
+
+  function activate() {
+    merchantListDataService.getMerchantList()
+    .then(function(results) {
+      vm.data = results;
+      console.log(results);
+    }, function(error) {})
+    .finally(function() {
+
+    });
+  }
+
   function signout(){
     LoginSvc.logout()
     $state.go('login')
   }
 
 }
-
-var stateConfig = {
-  name: 'home',
-  url: '/home',
-  templateUrl: require('./home.html'),
-  controller: 'homeCtrl'
-};
-
-homeCtrl.$inject = [
-  '$scope',
-  '$sessionStorage',
-  '$state',
-  '$filter',
-  'LoginSvc'
-]
-
-function routeConfig($stateProvider) {
-  $stateProvider.state(stateConfig)
-}
-
-angular.module('proj')
-  .controller('homeCtrl', homeCtrl)
-  .config([ '$stateProvider', routeConfig ])
 
 module.exports = stateConfig;
